@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.provider.MediaStore
+import android.text.Editable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -39,7 +40,7 @@ class RecyclerViewAdapter(val surveyData: SurveyData,activityMainBinding: Activi
     RecyclerView.Adapter<RecyclerViewAdapter.MyViewHolder>() {
 
 
-    val hashMap:HashMap<String,String> = HashMap()
+    val hashMap:HashMap<String,String?> = HashMap()
     var onClickListener: OnClickListener? = null
     val TYPE_SINGLE_CHOICE = "SINGLE_CHOICE"
     val TYPE_PHOTO_CHOICE = "PHOTO"
@@ -85,7 +86,7 @@ class RecyclerViewAdapter(val surveyData: SurveyData,activityMainBinding: Activi
     init {
         for (survey in surveyData)
         {
-           hashMap.put(survey.id,"No Value")
+           hashMap.put(survey.id,null)
         }
 
 
@@ -120,7 +121,7 @@ class RecyclerViewAdapter(val surveyData: SurveyData,activityMainBinding: Activi
         holder.hideEverything()
         lateinit var binding: ViewBinding;
         when {
-            surveyDataItem.type.equals(TYPE_PHOTO_CHOICE) -> {
+            surveyDataItem.type == TYPE_PHOTO_CHOICE -> {
                 binding = holder.binding.typeImage
 
                 binding.root.visibility = View.VISIBLE;
@@ -155,7 +156,7 @@ class RecyclerViewAdapter(val surveyData: SurveyData,activityMainBinding: Activi
             }
 
 
-            surveyDataItem.type.equals(TYPE_SINGLE_CHOICE) -> {
+            surveyDataItem.type == TYPE_SINGLE_CHOICE -> {
                 binding = holder.binding.typeSingleChoice as TypeSingleChoiceBinding
                 binding.root.visibility = View.VISIBLE;
 
@@ -175,6 +176,10 @@ class RecyclerViewAdapter(val surveyData: SurveyData,activityMainBinding: Activi
                         visibility =
                             if (i < surveyDataItem.dataMap.options.size) View.VISIBLE else View.GONE
                     }
+                   (hashMap[surveyDataItem.id]).let {
+                       if(optionBinding?.text?.trim()==it?.trim())
+                       optionBinding?.isChecked =true
+                   }
                 }
 
                 binding.radioGroup.setOnCheckedChangeListener(object :RadioGroup.OnCheckedChangeListener{
@@ -186,13 +191,22 @@ class RecyclerViewAdapter(val surveyData: SurveyData,activityMainBinding: Activi
                 })
             }
 
-            surveyDataItem.type.equals(TYPE_COMMENT_CHOICE) -> {
+            surveyDataItem.type == TYPE_COMMENT_CHOICE -> {
                 binding = holder.binding.typeComment as TypeCommentBinding
                 binding.root.visibility = View.VISIBLE;
 
                 binding.heading.text = surveyDataItem.title
 
+                (hashMap[surveyDataItem.id]).let {
+                    if(it!=null) {
+                        binding.switch1.isChecked = true
+                        binding.ETLayout.visibility = View.VISIBLE;
+                        binding.editText.text = Editable.Factory.getInstance().newEditable(it);
+                    }
+                }
+
                 binding.switch1.setOnClickListener {
+
 
                     binding.ETLayout.visibility =
                         if ((it as SwitchCompat).isChecked) {
