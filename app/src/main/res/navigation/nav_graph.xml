@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/itemFragment">
+
+
+
+
+    <fragment
+        android:id="@+id/itemFragment"
+        android:name="com.nasa.customizablesurveyapp.ui.fragment.UserListFragment"
+        android:label="fragment_item_list"
+        tools:layout="@layout/fragment_user_list">
+        <action
+            android:id="@+id/action_itemFragment_to_blankFragment"
+            app:destination="@id/blankFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/blankFragment"
+        android:name="com.nasa.customizablesurveyapp.ui.fragment.UserDetailsFragment"
+        android:label="fragment_blank"
+        tools:layout="@layout/fragment_user_details" >
+<!--        <argument-->
+<!--            android:name="user_data"-->
+<!--            app:argType="com.example.myapplication.data.model.User"-->
+<!--            app:nullable="true"-->
+<!--            android:defaultValue="@null" />-->
+    </fragment>
+</navigation>
